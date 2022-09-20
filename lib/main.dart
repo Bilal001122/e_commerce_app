@@ -24,12 +24,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          textTheme: GoogleFonts.poppinsTextTheme(
-            Theme.of(context).textTheme,
-          ),
+          fontFamily: 'Poppins',
         ),
-        home: LandingScreen(),
+        home: RegisterScreen(),
       ),
     );
   }
 }
+// textTheme: GoogleFonts.poppinsTextTheme(
+//   Theme.of(context).textTheme,
+// ),
