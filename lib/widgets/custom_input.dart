@@ -1,14 +1,10 @@
 import 'package:e_commerce_app/constants.dart';
 import 'package:flutter/material.dart';
 
-class CustomInputField extends StatefulWidget {
-  const CustomInputField({Key? key}) : super(key: key);
+class CustomInputField extends StatelessWidget {
+  final String hintText;
+  const CustomInputField({Key? key, required this.hintText}) : super(key: key);
 
-  @override
-  State<CustomInputField> createState() => _CustomInputFieldState();
-}
-
-class _CustomInputFieldState extends State<CustomInputField> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +19,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
       child: TextField(
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Email ...',
+          hintText: hintText,
           contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         ),
         style: Constants.regularDarkText,

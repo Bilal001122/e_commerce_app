@@ -1,12 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:e_commerce_app/constants.dart';
-import 'package:e_commerce_app/screens/home_screen.dart';
-import 'package:e_commerce_app/screens/screens.dart';
 import 'package:e_commerce_app/widgets/custom_button.dart';
 import 'package:e_commerce_app/widgets/custom_input.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:e_commerce_app/models/user.dart' as model_user;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -30,24 +26,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 24.0),
                 child: Text(
-                  'Welcome User,\n Login to your account',
+                  'Create A New Account.',
                   textAlign: TextAlign.center,
                   style: Constants.boldHeading,
                 ),
               ),
               Column(
                 children: [
-                  CustomInputField(),
-                  CustomInputField(),
+                  CustomInputField(hintText: 'Email'),
+                  CustomInputField(hintText: 'Password ...'),
                   CustomButton(
-                    text: 'Login',
+                    text: 'Create Account',
                     onPress: () {},
                   ),
                 ],
               ),
               CustomButton(
-                text: 'Create New Account',
-                onPress: () {},
+                text: 'Back To Login',
+                onPress: () {
+                  Navigator.pop(context);
+                },
                 outlinedButton: true,
               ),
             ],
