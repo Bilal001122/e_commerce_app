@@ -46,9 +46,24 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  bool loginScreenFormLoading = false;
+  String? email;
+  String? password;
+  late FocusNode passwordFocusNode;
+  late FocusNode emailFocusNode;
+
+  @override
+  void dispose() {
+    passwordFocusNode.dispose();
+    emailFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<model_user.User?>(context);
+    passwordFocusNode = FocusNode();
+    emailFocusNode = FocusNode();
     return Scaffold(
       body: SafeArea(
         child: SizedBox(
@@ -66,12 +81,33 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Column(
                 children: [
-                  CustomInputField(hintText: 'Email'),
-                  CustomInputField(hintText: 'Password ...'),
+                  CustomInputField(
+                    textInputAction: TextInputAction.next,
+                    hintText: 'Email',
+                    onChanged: (value) {
+                      email = value;
+                    },
+                    onSubmitted: (value) {
+                      passwordFocusNode.requestFocus();
+                    },
+                  ),
+                  CustomInputField(
+                    textInputAction: TextInputAction.done,
+                    hintText: 'Password ...',
+                    passwordStars: true,
+                    onChanged: (value) {
+                      password = value;
+                    },
+                    focusNode: passwordFocusNode,
+                  ),
                   CustomButton(
+                    isLoading: loginScreenFormLoading,
                     text: 'Login',
                     onPress: () {
                       _alertDialogBuilder();
+                      setState(() {
+                        loginScreenFormLoading = true;
+                      });
                     },
                   ),
                 ],

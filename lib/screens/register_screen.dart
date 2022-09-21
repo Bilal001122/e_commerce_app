@@ -13,9 +13,24 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool loginScreenFormLoading = false;
+  String? email;
+  String? password;
+  late FocusNode passwordFocusNode;
+  late FocusNode emailFocusNode;
+
+  @override
+  void dispose() {
+    passwordFocusNode.dispose();
+    emailFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<model_user.User?>(context);
+    passwordFocusNode = FocusNode();
+    emailFocusNode = FocusNode();
     return Scaffold(
       body: SafeArea(
         child: SizedBox(
@@ -33,8 +48,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               Column(
                 children: [
-                  CustomInputField(hintText: 'Email'),
-                  CustomInputField(hintText: 'Password ...'),
+                  CustomInputField(
+                    textInputAction: TextInputAction.next,
+                    hintText: 'Email',
+                    onChanged: (value) {
+                      email = value;
+                    },
+                    onSubmitted: (value) {
+                      passwordFocusNode.requestFocus();
+                    },
+                  ),
+                  CustomInputField(
+                    textInputAction: TextInputAction.done,
+                    hintText: 'Password ...',
+                    passwordStars: true,
+                    onChanged: (value) {
+                      password = value;
+                    },
+                    focusNode: passwordFocusNode,
+                  ),
                   CustomButton(
                     text: 'Create Account',
                     onPress: () {},
