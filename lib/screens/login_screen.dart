@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/screens/home_screen.dart';
 import 'package:e_commerce_app/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app/constants.dart';
@@ -5,6 +6,7 @@ import 'package:e_commerce_app/widgets/custom_button.dart';
 import 'package:e_commerce_app/widgets/custom_input.dart';
 import 'package:e_commerce_app/models/user.dart' as model_user;
 import 'package:provider/provider.dart';
+import 'package:e_commerce_app/services/authentication.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -47,10 +49,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool loginScreenFormLoading = false;
-  String? email;
-  String? password;
+  late String email;
+  late String password;
   late FocusNode passwordFocusNode;
   late FocusNode emailFocusNode;
+  final AuthService _auth = AuthService();
 
   @override
   void dispose() {
@@ -65,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordFocusNode = FocusNode();
     emailFocusNode = FocusNode();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SizedBox(
           width: double.infinity,
@@ -101,10 +105,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusNode: passwordFocusNode,
                   ),
                   CustomButton(
-                    isLoading: loginScreenFormLoading,
+                    //isLoading: loginScreenFormLoading,
                     text: 'Login',
-                    onPress: () {
-                      _alertDialogBuilder();
+                    onPress: () async {
+                      dynamic result = await _auth.signInWithEmailAndPassword(
+                          email, password);
+                      result != null
+                          ? Navigator.pushNamed(context, '/home')
+                          : Navigator.pushNamed(context, '/login');
+                      passwordFocusNode.dispose();
+                      emailFocusNode.dispose();
+                      //_alertDialogBuilder();
                       setState(() {
                         loginScreenFormLoading = true;
                       });
@@ -115,12 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomButton(
                 text: 'Create New Account',
                 onPress: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RegisterScreen(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/register');
                 },
                 outlinedButton: true,
               ),

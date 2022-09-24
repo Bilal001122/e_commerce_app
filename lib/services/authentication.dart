@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Stream<User?> hasData() {
+    return _auth.authStateChanges();
+  }
+
   // create user obj based on firebase user
   user_model.User? _userFromFirebaseUser(User? user) {
     return user != null ? user_model.User(uid: user.uid) : null;
@@ -24,6 +28,7 @@ class AuthService {
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
+      return null;
     }
   }
 
@@ -37,6 +42,7 @@ class AuthService {
       return _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());
+      return null;
     }
   }
 

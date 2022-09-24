@@ -1,5 +1,7 @@
+import 'package:e_commerce_app/screens/home_screen.dart';
 import 'package:e_commerce_app/screens/login_screen.dart';
 import 'package:e_commerce_app/screens/register_screen.dart';
+import 'package:e_commerce_app/screens/wrapper_screen.dart';
 import 'package:e_commerce_app/services/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,12 +29,13 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Poppins',
         ),
-        home: LoginScreen(),
-        // initialRoute: '/login',
-        // routes: {
-        //   '/login': (context) => LoginScreen(),
-        //   '/register': (context) => RegisterScreen(),
-        // },
+        initialRoute: '/wrapper',
+        routes: {
+          '/wrapper': (context) => WrapperScreen(),
+          '/login': (context) => LoginScreen(),
+          '/register': (context) => RegisterScreen(),
+          '/home': (context) => HomeScreen(),
+        },
       ),
     );
   }

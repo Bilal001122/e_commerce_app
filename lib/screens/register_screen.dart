@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/services/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/widgets/custom_button.dart';
@@ -13,11 +14,43 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  bool loginScreenFormLoading = false;
-  String? email;
-  String? password;
+  Future<void> _alertDialogBuilder() async {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            'Error',
+          ),
+          content: Container(
+            child: Text('dfgdfgdfgdfg'),
+          ),
+          actions: [
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  primary: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Close'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool registerScreenFormLoading = false;
+  late String email;
+  late String password;
   late FocusNode passwordFocusNode;
   late FocusNode emailFocusNode;
+  final AuthService _auth = AuthService();
 
   @override
   void dispose() {
@@ -28,10 +61,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<model_user.User?>(context);
+    //final user = Provider.of<model_user.User?>(context);
     passwordFocusNode = FocusNode();
     emailFocusNode = FocusNode();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SizedBox(
           width: double.infinity,
@@ -68,15 +102,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     focusNode: passwordFocusNode,
                   ),
                   CustomButton(
+                    //isLoading: registerScreenFormLoading,
                     text: 'Create Account',
-                    onPress: () {},
+                    onPress: () async {
+                      dynamic result = await _auth.registerWithEmailAndPassword(
+                          email, password);
+                      passwordFocusNode.dispose();
+                      emailFocusNode.dispose();
+                      //_alertDialogBuilder();
+                      setState(() {
+                        registerScreenFormLoading = true;
+                      });
+                    },
                   ),
                 ],
               ),
               CustomButton(
                 text: 'Back To Login',
                 onPress: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/login');
                 },
                 outlinedButton: true,
               ),
