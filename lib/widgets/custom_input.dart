@@ -8,6 +8,8 @@ class CustomInputField extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function(String value) onChanged;
   final void Function(String value)? onSubmitted;
+  final IconData icon;
+
   const CustomInputField({
     Key? key,
     required this.hintText,
@@ -16,6 +18,7 @@ class CustomInputField extends StatelessWidget {
     this.onSubmitted,
     this.passwordStars = false,
     required this.textInputAction,
+    required this.icon,
   }) : super(key: key);
 
   @override
@@ -29,18 +32,32 @@ class CustomInputField extends StatelessWidget {
         color: Color(0xFFF2F2F2),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: TextField(
-        textInputAction: textInputAction,
-        obscureText: passwordStars ? true : false,
-        onSubmitted: onSubmitted,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: hintText,
-          contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-        ),
-        style: Constants.regularDarkText,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 15,
+            top: 20,
+            child: Icon(
+              icon,
+              color: Color(0xFF595858),
+            ),
+          ),
+          TextField(
+            textInputAction: textInputAction,
+            obscureText: passwordStars ? true : false,
+            onSubmitted: onSubmitted,
+            onChanged: onChanged,
+            focusNode: focusNode,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: hintText,
+              contentPadding:
+                  //EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  EdgeInsets.fromLTRB(55, 18, 24, 18),
+            ),
+            style: Constants.regularDarkText,
+          ),
+        ],
       ),
     );
   }

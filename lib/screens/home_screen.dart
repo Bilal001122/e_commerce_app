@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/constants.dart';
+import 'package:e_commerce_app/screens/nav_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,11 +13,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'Home Screen',
-          style: Constants.regularHeading,
-        ),
+        child: Text('Home'),
       ),
     );
   }
 }
+
+// final List<Widget> screens = [
+//   HomeScreen(
+//     key: PageStorageKey('home'),
+//   ),
+//   Scaffold(body: Center(child: Text('1'))),
+//   Scaffold(body: Center(child: Text('2'))),
+//   Scaffold(body: Center(child: Text('3'))),
+// ];

@@ -21,7 +21,7 @@ class AuthService {
   }
 
   // sign in anon
-  Future<user_model.User?> signInAnon() async {
+  Future signInAnon() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
       User? user = result.user;
@@ -33,22 +33,25 @@ class AuthService {
   }
 
   // sign in with email and password
-  Future<user_model.User?> signInWithEmailAndPassword(
-      String email, String password) async {
+  Future signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
       return _userFromFirebaseUser(user);
-    } catch (error) {
-      print(error.toString());
-      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        return 'Wrong password provided for that user.';
+      } else if (e.code == 'invalid-email') {
+        return 'The email is not valid.';
+      }
     }
   }
 
   // register with email and password
-  Future<user_model.User?> registerWithEmailAndPassword(
-      String email, String password) async {
+  Future registerWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -57,9 +60,14 @@ class AuthService {
       // await DatabaseService(uid: user.uid)
       //     .updateUserData('0', 'new crew member', 100);
       return _userFromFirebaseUser(user);
-    } catch (error) {
-      print(error.toString());
-      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        return 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        return 'The account already exists for that email.';
+      } else if (e.code == 'invalid-email') {
+        return 'The email is not valid.';
+      }
     }
   }
 

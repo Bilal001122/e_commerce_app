@@ -3,18 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/widgets/custom_button.dart';
 import 'package:e_commerce_app/widgets/custom_input.dart';
-import 'package:e_commerce_app/models/user.dart' as model_user;
-import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  RegisterScreen({Key? key}) : super(key: key);
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  Future<void> _alertDialogBuilder() async {
+  bool registerScreenFormLoading = false;
+  late String email;
+  late String password;
+  late FocusNode passwordFocusNode;
+  late FocusNode emailFocusNode;
+  final AuthService _auth = AuthService();
+
+  Future<void> _alertDialogBuilder(String error) async {
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -24,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'Error',
           ),
           content: Container(
-            child: Text('dfgdfgdfgdfg'),
+            child: Text(error),
           ),
           actions: [
             Center(
@@ -45,13 +50,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  bool registerScreenFormLoading = false;
-  late String email;
-  late String password;
-  late FocusNode passwordFocusNode;
-  late FocusNode emailFocusNode;
-  final AuthService _auth = AuthService();
-
   @override
   void dispose() {
     passwordFocusNode.dispose();
@@ -61,7 +59,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final user = Provider.of<model_user.User?>(context);
     passwordFocusNode = FocusNode();
     emailFocusNode = FocusNode();
     return Scaffold(
@@ -83,6 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Column(
                 children: [
                   CustomInputField(
+                    icon: Icons.email,
                     textInputAction: TextInputAction.next,
                     hintText: 'Email',
                     onChanged: (value) {
@@ -93,6 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   CustomInputField(
+                    icon: Icons.key,
                     textInputAction: TextInputAction.done,
                     hintText: 'Password ...',
                     passwordStars: true,
@@ -102,16 +101,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     focusNode: passwordFocusNode,
                   ),
                   CustomButton(
-                    //isLoading: registerScreenFormLoading,
+                    isLoading: registerScreenFormLoading,
                     text: 'Create Account',
                     onPress: () async {
-                      dynamic result = await _auth.registerWithEmailAndPassword(
-                          email, password);
-                      passwordFocusNode.dispose();
-                      emailFocusNode.dispose();
-                      //_alertDialogBuilder();
                       setState(() {
                         registerScreenFormLoading = true;
+                      });
+                      dynamic result = await _auth.registerWithEmailAndPassword(
+                          email, password);
+
+                      switch (result) {
+                        case 'The password provided is too weak.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+                        case 'The account already exists for that email.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+                        case 'The email is not valid.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+                        case null:
+                          {
+                            _alertDialogBuilder(
+                                'Please enter a valid informations.');
+                          }
+                          break;
+                        default:
+                          {
+                            Navigator.pushNamed(context, '/nav');
+                          }
+                          break;
+                      }
+                      setState(() {
+                        registerScreenFormLoading = false;
                       });
                     },
                   ),

@@ -1,23 +1,26 @@
-import 'package:e_commerce_app/screens/home_screen.dart';
-import 'package:e_commerce_app/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/widgets/custom_button.dart';
 import 'package:e_commerce_app/widgets/custom_input.dart';
-import 'package:e_commerce_app/models/user.dart' as model_user;
-import 'package:provider/provider.dart';
 import 'package:e_commerce_app/services/authentication.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loginScreenFormLoading = false;
+  late String email;
+  late String password;
+  late FocusNode passwordFocusNode;
+  late FocusNode emailFocusNode;
+  final AuthService _auth = AuthService();
+
   // build an alert dialog
-  Future<void> _alertDialogBuilder() async {
+  Future<void> _alertDialogBuilder(String error) async {
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -26,9 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
           title: Text(
             'Error',
           ),
-          content: Container(
-            child: Text('dfgdfgdfgdfg'),
-          ),
+          content: Text(error),
           actions: [
             Center(
               child: TextButton(
@@ -48,13 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  bool loginScreenFormLoading = false;
-  late String email;
-  late String password;
-  late FocusNode passwordFocusNode;
-  late FocusNode emailFocusNode;
-  final AuthService _auth = AuthService();
-
   @override
   void dispose() {
     passwordFocusNode.dispose();
@@ -64,7 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<model_user.User?>(context);
     passwordFocusNode = FocusNode();
     emailFocusNode = FocusNode();
     return Scaffold(
@@ -86,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Column(
                 children: [
                   CustomInputField(
+                    icon: Icons.email,
                     textInputAction: TextInputAction.next,
                     hintText: 'Email',
                     onChanged: (value) {
@@ -96,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   CustomInputField(
+                    icon: Icons.key,
                     textInputAction: TextInputAction.done,
                     hintText: 'Password ...',
                     passwordStars: true,
@@ -105,19 +100,48 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusNode: passwordFocusNode,
                   ),
                   CustomButton(
-                    //isLoading: loginScreenFormLoading,
+                    isLoading: loginScreenFormLoading,
                     text: 'Login',
                     onPress: () async {
-                      dynamic result = await _auth.signInWithEmailAndPassword(
-                          email, password);
-                      result != null
-                          ? Navigator.pushNamed(context, '/home')
-                          : Navigator.pushNamed(context, '/login');
-                      passwordFocusNode.dispose();
-                      emailFocusNode.dispose();
-                      //_alertDialogBuilder();
                       setState(() {
                         loginScreenFormLoading = true;
+                      });
+                      dynamic result = await _auth.signInWithEmailAndPassword(
+                          email, password);
+
+                      print(email + password);
+                      switch (result) {
+                        case 'No user found for that email.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+                        case 'Wrong password provided for that user.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+                        case 'The email is not valid.':
+                          {
+                            _alertDialogBuilder(result);
+                          }
+                          break;
+
+                        case null:
+                          {
+                            _alertDialogBuilder(
+                                'Please enter a valid informations.');
+                          }
+                          break;
+
+                        default:
+                          {
+                            Navigator.pushNamed(context, '/nav');
+                          }
+                          break;
+                      }
+                      setState(() {
+                        loginScreenFormLoading = false;
                       });
                     },
                   ),
