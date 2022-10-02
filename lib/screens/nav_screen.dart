@@ -54,46 +54,48 @@ class _NavScreenState extends State<NavScreen> {
   @override
   Widget build(BuildContext context) {
     // this is a custom BottomNavBar
-    return Scaffold(
-      body: PageView(
-        controller: tabsPageController,
-        onPageChanged: (value) {
-          setState(() {
-            currentIndex = value;
-          });
-        },
-        children: widget.screens,
-      ),
-      bottomNavigationBar: CustomLineIndicatorBottomNavbar(
-        selectedColor: Color(0xFFFF1E00),
-        unSelectedColor: Colors.black87,
-        backgroundColor: Colors.white,
-        currentIndex: currentIndex,
-        selectedIconSize: 25,
-        unselectedIconSize: 25,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-            tabsPageController.jumpToPage(currentIndex);
-          });
-        },
-        enableLineIndicator: true,
-        lineIndicatorWidth: 2,
-        indicatorType: IndicatorType.Top,
-        customBottomBarItems: widget.icons
-            .map(
-              (title, icon) => MapEntry(
-                title,
-                CustomBottomBarItems(
-                  label: title,
-                  icon: icon,
+    return SafeArea(
+      child: Scaffold(
+        body: PageView(
+          controller: tabsPageController,
+          onPageChanged: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+          },
+          children: widget.screens,
+        ),
+        bottomNavigationBar: CustomLineIndicatorBottomNavbar(
+          selectedColor: Color(0xFFFF1E00),
+          unSelectedColor: Colors.black87,
+          backgroundColor: Colors.white,
+          currentIndex: currentIndex,
+          selectedIconSize: 25,
+          unselectedIconSize: 25,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          onTap: (index) {
+            setState(() {
+              currentIndex = index;
+              tabsPageController.jumpToPage(currentIndex);
+            });
+          },
+          enableLineIndicator: true,
+          lineIndicatorWidth: 2,
+          indicatorType: IndicatorType.Top,
+          customBottomBarItems: widget.icons
+              .map(
+                (title, icon) => MapEntry(
+                  title,
+                  CustomBottomBarItems(
+                    label: title,
+                    icon: icon,
+                  ),
                 ),
-              ),
-            )
-            .values
-            .toList(),
+              )
+              .values
+              .toList(),
+        ),
       ),
     );
     //body: widget.screens[currentIndex],

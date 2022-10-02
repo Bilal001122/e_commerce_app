@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/custom_action_bar.dart';
+
 class SavedScreen extends StatefulWidget {
   const SavedScreen({Key? key}) : super(key: key);
 
@@ -10,10 +12,17 @@ class SavedScreen extends StatefulWidget {
 class _SavedScreenState extends State<SavedScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Saved'),
-      ),
+    return Stack(
+      children: [
+        CustomActionBar(
+          text: 'Saved',
+        ),
+        Center(
+          child: Text(
+            'Saved',
+          ),
+        ),
+      ],
     );
   }
 }
