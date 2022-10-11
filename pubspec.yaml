@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^3.9.0
   provider: ^6.0.3
   custom_line_indicator_bottom_navbar: ^0.0.8
+  cloud_firestore: ^3.5.0
 
 dev_dependencies:
   flutter_test:

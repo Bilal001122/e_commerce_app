@@ -1,4 +1,3 @@
-import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/screens/home_screen.dart';
 import 'package:e_commerce_app/screens/log_out.dart';
 import 'package:e_commerce_app/screens/saved_screen.dart';

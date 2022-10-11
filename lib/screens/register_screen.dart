@@ -109,7 +109,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       });
                       dynamic result = await _auth.registerWithEmailAndPassword(
                           email, password);
-
                       switch (result) {
                         case 'The password provided is too weak.':
                           {

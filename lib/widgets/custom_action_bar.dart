@@ -12,6 +12,7 @@ class CustomActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(),
       padding: EdgeInsets.only(
         top: 24,
         left: 24,
