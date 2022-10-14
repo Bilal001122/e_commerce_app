@@ -2,12 +2,10 @@ import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/services/database.dart';
 import 'package:e_commerce_app/widgets/custom_action_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../models/product.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final String productId;
+  final String? productId;
 
   const ProductDetailsScreen({Key? key, required this.productId})
       : super(key: key);
@@ -26,7 +24,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             StreamBuilder<List<Product>>(
               stream: DatabaseService().products,
               builder: (context, snapshot) {
-                print(snapshot.connectionState);
                 final products = snapshot.data;
                 late final Product product;
                 products?.forEach((element) {
@@ -41,7 +38,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 20, 24, 4),
                         child: Text(
-                          product.name,
+                          product.name!,
                           style: Constants.boldHeading,
                         ),
                       ),
@@ -65,7 +62,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           horizontal: 24,
                         ),
                         child: Text(
-                          product.description,
+                          product.description!,
                           style: TextStyle(
                             fontSize: 16,
                           ),
@@ -79,6 +76,67 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Text(
                           'Select Size',
                           style: Constants.regularDarkText,
+                        ),
+                      ),
+                      _ProductSize(sizes: product.sizes!),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30,
+                          bottom: 20,
+                          left: 24,
+                          right: 24,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFDCDCDC),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              width: 60,
+                              height: 60,
+                              child: Center(
+                                child: Icon(
+                                  Icons.bookmark_outline,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  height: 60,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(left: 16),
+                                  child: Text(
+                                    'Add To Cart',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () async {
+                                  await DatabaseService()
+                                      .addToCart(widget.productId!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Product added to the card',
+                                      ),
+                                    ),
+                                  );
+                                  print('done');
+                                },
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ],
@@ -129,20 +187,20 @@ class _ImageSwipeState extends State<_ImageSwipe> {
               });
             },
             children: [
-              for (int i = 0; i < widget.product.images.length; i++)
+              for (int i = 0; i < widget.product.images!.length; i++)
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: i == 0
                       ? Hero(
-                          tag: 'firstHero',
+                          tag: widget.product.images![0],
                           child: Image.network(
-                            widget.product.images[i],
+                            widget.product.images![0],
                             height: 250,
                             fit: BoxFit.fitHeight,
                           ),
                         )
                       : Image.network(
-                          widget.product.images[i],
+                          widget.product.images![i],
                           height: 250,
                           fit: BoxFit.fitHeight,
                         ),
@@ -156,7 +214,7 @@ class _ImageSwipeState extends State<_ImageSwipe> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (int i = 0; i < widget.product.images.length; i++)
+                for (int i = 0; i < widget.product.images!.length; i++)
                   AnimatedContainer(
                     duration: Duration(
                       milliseconds: 300,
@@ -175,6 +233,64 @@ class _ImageSwipeState extends State<_ImageSwipe> {
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class _ProductSize extends StatefulWidget {
+  final List<dynamic> sizes;
+
+  const _ProductSize({Key? key, required this.sizes}) : super(key: key);
+
+  @override
+  State<_ProductSize> createState() => _ProductSizeState();
+}
+
+class _ProductSizeState extends State<_ProductSize> {
+  int selectedSize = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0),
+      child: Row(
+        children: [
+          for (int i = 0; i < widget.sizes.length; i++)
+            Container(
+              margin: EdgeInsets.only(left: 4, right: 4, bottom: 10),
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: selectedSize == i
+                    ? Color(0xFFFF1E00).withOpacity(0.9)
+                    : Color(0xFFDCDCDC),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  splashColor: Colors.black12,
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    setState(() {
+                      selectedSize = i;
+                    });
+                  },
+                  child: Center(
+                    child: Text(
+                      widget.sizes[i],
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -78,9 +78,9 @@ class Products extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Hero(
-                  tag: 'firstHero',
+                  tag: product.images![0],
                   child: Image.network(
-                    product.images[0],
+                    product.images![0],
                     fit: BoxFit.fitHeight,
                   ),
                 ),
@@ -95,7 +95,7 @@ class Products extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          product.name,
+                          product.name!,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
