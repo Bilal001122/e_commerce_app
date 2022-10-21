@@ -57,7 +57,7 @@ class CustomActionBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
-              child: StreamBuilder<List<int>>(
+              child: StreamBuilder<List<String>>(
                   stream: DatabaseService().productsCart,
                   builder: (context, snapshot) {
                     int? totalItems = 0;

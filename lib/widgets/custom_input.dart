@@ -1,7 +1,8 @@
 import 'package:e_commerce_app/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CustomInputField extends StatelessWidget {
+class CustomInputField extends StatefulWidget {
   final String hintText;
   final bool passwordStars;
   final TextInputAction textInputAction;
@@ -9,6 +10,7 @@ class CustomInputField extends StatelessWidget {
   final void Function(String value) onChanged;
   final void Function(String value)? onSubmitted;
   final IconData icon;
+  final bool showEye;
 
   const CustomInputField({
     Key? key,
@@ -19,7 +21,15 @@ class CustomInputField extends StatelessWidget {
     this.passwordStars = false,
     required this.textInputAction,
     required this.icon,
+    this.showEye = false,
   }) : super(key: key);
+
+  @override
+  State<CustomInputField> createState() => _CustomInputFieldState();
+}
+
+class _CustomInputFieldState extends State<CustomInputField> {
+  bool hidePassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,25 +48,55 @@ class CustomInputField extends StatelessWidget {
             left: 15,
             top: 20,
             child: Icon(
-              icon,
+              widget.icon,
               color: Color(0xFF595858),
             ),
           ),
           TextField(
-            textInputAction: textInputAction,
-            obscureText: passwordStars ? true : false,
-            onSubmitted: onSubmitted,
-            onChanged: onChanged,
-            focusNode: focusNode,
+            textInputAction: widget.textInputAction,
+            obscureText: widget.passwordStars
+                ? hidePassword
+                    ? true
+                    : false
+                : false,
+            onSubmitted: widget.onSubmitted,
+            onChanged: widget.onChanged,
+            focusNode: widget.focusNode,
             decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Colors.black,
+                  style: BorderStyle.solid,
+                  width: 2,
+                ),
+              ),
               border: InputBorder.none,
-              hintText: hintText,
+              hintText: widget.hintText,
               contentPadding:
                   //EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                   EdgeInsets.fromLTRB(55, 18, 24, 18),
             ),
             style: Constants.regularDarkText,
           ),
+          if (widget.showEye == true)
+            Positioned(
+              right: 15,
+              top: 20,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    hidePassword = !(hidePassword);
+                  });
+                },
+                child: Icon(
+                  hidePassword == false
+                      ? CupertinoIcons.eye_slash_fill
+                      : CupertinoIcons.eye_fill,
+                  color: Color(0xFF595858),
+                ),
+              ),
+            ),
         ],
       ),
     );

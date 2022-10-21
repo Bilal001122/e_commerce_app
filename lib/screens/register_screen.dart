@@ -91,6 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   CustomInputField(
+                    showEye: true,
                     icon: Icons.key,
                     textInputAction: TextInputAction.done,
                     hintText: 'Password ...',

@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/services/database.dart';
 import 'package:e_commerce_app/widgets/custom_action_bar.dart';
+import 'package:e_commerce_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
@@ -15,6 +16,8 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  String selectedProductSize = '0';
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -78,7 +81,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           style: Constants.regularDarkText,
                         ),
                       ),
-                      _ProductSize(sizes: product.sizes!),
+                      _ProductSize(
+                        sizes: product.sizes!,
+                        onSelected: (size) {
+                          selectedProductSize = size;
+                        },
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                           top: 30,
@@ -89,30 +97,69 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // TextButton.icon(
+                            //   onPressed: () {},
+                            //   icon: Icon(
+                            //     Icons.bookmark_outline,
+                            //     color: Colors.black,
+                            //     size: 30,
+                            //   ),
+                            //   label: Text(''),
+                            //   style: TextButton.styleFrom(
+                            //     maximumSize: Size.fromHeight(60),
+                            //     shape: RoundedRectangleBorder(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //     ),
+                            //     backgroundColor: Color(0xFFDCDCDC),
+                            //   ),
+                            // ),
                             Container(
+                              height: 60,
+                              width: 60,
                               decoration: BoxDecoration(
-                                color: Color(0xFFDCDCDC),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              width: 60,
-                              height: 60,
-                              child: Center(
-                                child: Icon(
-                                  Icons.bookmark_outline,
-                                  size: 30,
+                              child: Material(
+                                color: Color(0xFFDCDCDC),
+                                borderRadius: BorderRadius.circular(12),
+                                child: InkWell(
+                                  onTap: () {},
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Icon(
+                                    Icons.bookmark_outline,
+                                    size: 30,
+                                  ),
                                 ),
                               ),
                             ),
                             Expanded(
-                              child: GestureDetector(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(12),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 12),
+                                child: TextButton(
+                                  onPressed: () async {
+                                    await DatabaseService().addToCart(
+                                        widget.productId!, selectedProductSize);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration: Duration(seconds: 1),
+                                        content: Text(
+                                          'Product added to the card',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  style: TextButton.styleFrom(
+                                    minimumSize: Size.fromHeight(60),
+                                    primary: Colors.white,
+                                    backgroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                        width: 0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                   ),
-                                  height: 60,
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.only(left: 16),
                                   child: Text(
                                     'Add To Cart',
                                     style: TextStyle(
@@ -122,20 +169,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                                   ),
                                 ),
-                                onTap: () async {
-                                  await DatabaseService()
-                                      .addToCart(widget.productId!);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Product added to the card',
-                                      ),
-                                    ),
-                                  );
-                                  print('done');
-                                },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -241,8 +276,10 @@ class _ImageSwipeState extends State<_ImageSwipe> {
 
 class _ProductSize extends StatefulWidget {
   final List<dynamic> sizes;
+  final Function(String) onSelected;
 
-  const _ProductSize({Key? key, required this.sizes}) : super(key: key);
+  const _ProductSize({Key? key, required this.sizes, required this.onSelected})
+      : super(key: key);
 
   @override
   State<_ProductSize> createState() => _ProductSizeState();
@@ -275,6 +312,7 @@ class _ProductSizeState extends State<_ProductSize> {
                   borderRadius: BorderRadius.circular(8),
                   onTap: () {
                     setState(() {
+                      widget.onSelected('${widget.sizes[i]}');
                       selectedSize = i;
                     });
                   },

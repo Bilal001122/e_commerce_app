@@ -90,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   CustomInputField(
+                    showEye: true,
                     icon: Icons.key,
                     textInputAction: TextInputAction.done,
                     hintText: 'Password ...',

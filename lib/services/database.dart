@@ -38,28 +38,28 @@ class DatabaseService {
         .map<List<Product>>(_productsListFromSnapshot);
   }
 
-  Future addToCart(String productId) {
+  Future addToCart(String productId, String size) {
     return usersCollection
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .collection('cart')
-        .doc(productId)
-        .set({'size': 1});
+        .doc()
+        .set({'size': size});
   }
 
-  List<int> _productsCartListFromSnapshot(QuerySnapshot snapshot) {
+  List<String> _productsCartListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map<int>(
+        .map<String>(
           (doc) => doc.get('size'),
         )
         .toList();
   }
 
-  Stream<List<int>> get productsCart {
+  Stream<List<String>> get productsCart {
     return usersCollection
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .collection('cart')
         .snapshots()
-        .map<List<int>>(
+        .map<List<String>>(
       (snapshot) {
         return _productsCartListFromSnapshot(snapshot);
       },
