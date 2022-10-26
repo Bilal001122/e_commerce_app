@@ -21,9 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return StreamProvider<List<Product>>.value(
       value: DatabaseService().products,
-      initialData: [],
+      initialData: const [],
       child: Stack(
-        children: [
+        children: const [
           Padding(
             padding: EdgeInsets.only(top: 80.0, bottom: 20),
             child: Products(),

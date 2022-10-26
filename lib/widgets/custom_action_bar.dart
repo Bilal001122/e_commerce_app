@@ -30,17 +30,27 @@ class CustomActionBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (hasBackArrow)
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.black,
+            Material(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(10),
+              child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.arrow_back_outlined,
-                  color: Colors.white,
+                splashColor: Colors.black12,
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_back_outlined,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -60,13 +70,14 @@ class CustomActionBar extends StatelessWidget {
               child: StreamBuilder<List<String>>(
                   stream: DatabaseService().productsCart,
                   builder: (context, snapshot) {
-                    int? totalItems = 0;
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      final productsCart = snapshot.data;
+                    int? totalItems;
+                    final productsCart = snapshot.data;
+                    if (snapshot.hasData == true) {
                       totalItems = productsCart?.length;
                     }
+                    totalItems = productsCart?.length;
                     return Text(
-                      '$totalItems',
+                      totalItems == null ? '0' : '$totalItems',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

@@ -2,6 +2,7 @@ import 'package:e_commerce_app/constants.dart';
 import 'package:e_commerce_app/services/database.dart';
 import 'package:e_commerce_app/widgets/custom_action_bar.dart';
 import 'package:e_commerce_app/widgets/custom_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
@@ -16,7 +17,11 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  String selectedProductSize = '0';
+  late final Map<String, dynamic> product = DatabaseService()
+      .productsCollection
+      .doc(widget.productId)
+      .get() as Map<String, dynamic>;
+  late String selectedProductSize = product['sizes'][0];
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +34,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               builder: (context, snapshot) {
                 final products = snapshot.data;
                 late final Product product;
-                products?.forEach((element) {
-                  if (element.id == widget.productId) {
-                    product = element;
-                  }
-                });
+                products?.forEach(
+                  (element) {
+                    if (element.id == widget.productId) {
+                      product = element;
+                    }
+                  },
+                );
                 if (snapshot.connectionState == ConnectionState.active) {
                   return ListView(
                     children: [
@@ -137,6 +144,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 padding: const EdgeInsets.only(left: 12),
                                 child: TextButton(
                                   onPressed: () async {
+                                    print(selectedProductSize);
                                     await DatabaseService().addToCart(
                                         widget.productId!, selectedProductSize);
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -154,10 +162,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     backgroundColor: Colors.black,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                        width: 0,
-                                        color: Colors.black,
-                                      ),
                                     ),
                                   ),
                                   child: Text(

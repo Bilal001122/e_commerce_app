@@ -4,10 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class DatabaseService {
-  final String? uid;
-
-  DatabaseService({this.uid});
-
   // collection reference
   final CollectionReference productsCollection =
       FirebaseFirestore.instance.collection('products');
@@ -56,11 +52,12 @@ class DatabaseService {
 
   Stream<List<String>> get productsCart {
     return usersCollection
-        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('cart')
         .snapshots()
         .map<List<String>>(
       (snapshot) {
+        print(_productsCartListFromSnapshot(snapshot).length);
         return _productsCartListFromSnapshot(snapshot);
       },
     );
